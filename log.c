@@ -6,10 +6,18 @@
 #include "stdatomic.h"
 #endif
 
+const char *level_strings[] = {
+	"TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
+};
+
+const char* log_level_string(log_level lvl) {
+	return level_strings[lvl];
+}
+
 typedef struct {
 	log_callback func;
 	log_level lvl;
-	FILE* writer;
+	FILE *writer;
 } callback;
 
 static struct {
