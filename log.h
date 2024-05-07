@@ -19,15 +19,15 @@ typedef enum {
 
 typedef struct {
 	// writing destination
-	FILE* writer;
+	FILE *writer;
 	// log information
 	log_level lvl;
 	struct tm *time;
 	// caller information
-	char* caller_file;
+	char *caller_file;
 	int caller_line;
 	// message and arguments
-	char* fmt;
+	char *fmt;
 	va_list args;
 } log;
 
