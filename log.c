@@ -31,6 +31,17 @@ static struct {
 	callback cbs[MAX_CALLBACKS];
 } logger;
 
+int log_add_callback(log_callback func, FILE *writer, log_level lvl) {
+	for (size_t i = 0; i < MAX_CALLBACKS; i++) {
+		if (logger.cbs[i].func == NULL) {
+			logger.cbs[i] = (callback){.func = func, .writer = writer, .lvl = lvl};
+			return 0;
+		}
+	}
+
+	return -1;
+}
+
 // in the absence of atomics, I want to provide at least some guarantees -.-
 static void lock() {
 #ifdef __STDC_NO_ATOMICS__
@@ -48,3 +59,4 @@ static void unlock() {
 	atomic_store(&logger.lock, 0);
 #endif
 }
+

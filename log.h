@@ -34,6 +34,7 @@ typedef struct {
 typedef void (*log_callback)(log *l);
 
 void log_log(log_level level, char *file, int line, char *fmt, ...);
+int log_add_callback(log_callback callback, FILE *writer, log_level lvl);
 const char* log_level_string(log_level lvl);
 
 #endif
