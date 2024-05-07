@@ -10,6 +10,13 @@ enum LogLevel {
 	TRACE, DEBUG, INFO, WARN, ERROR, FATAL
 };
 
+#define LOG_TRACE(...) log_log(TRACE, __FILE__, __LINE__, __VA_ARGS__)
+#define LOG_DEBUG(...) log_log(DEBUG, __FILE__, __LINE__, __VA_ARGS__)
+#define LOG_INFO(...) log_log(INFO, __FILE__, __LINE__, __VA_ARGS__)
+#define LOG_WARN(...) log_log(WARN, __FILE__, __LINE__, __VA_ARGS__)
+#define LOG_ERROR(...) log_log(ERROR, __FILE__, __LINE__, __VA_ARGS__)
+#define LOG_FATAL(...) log_log(FATAL, __FILE__, __LINE__, __VA_ARGS__)
+
 typedef struct {
 	// writing destination
 	FILE* writer;
