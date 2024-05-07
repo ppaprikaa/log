@@ -24,5 +24,6 @@ typedef struct {
 	va_list args;
 } log;
 
+void log_log(int level, char *file, int line, char *fmt, ...);
 
 #endif
