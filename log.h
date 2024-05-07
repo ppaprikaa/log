@@ -6,9 +6,9 @@
 #include <stdio.h>
 #include <time.h>
 
-enum LogLevel {
+typedef enum {
 	TRACE, DEBUG, INFO, WARN, ERROR, FATAL
-};
+} log_level;
 
 #define LOG_TRACE(...) log_log(TRACE, __FILE__, __LINE__, __VA_ARGS__)
 #define LOG_DEBUG(...) log_log(DEBUG, __FILE__, __LINE__, __VA_ARGS__)
@@ -21,7 +21,7 @@ typedef struct {
 	// writing destination
 	FILE* writer;
 	// log information
-	int lvl;
+	log_level lvl;
 	struct tm *time;
 	// caller information
 	char* caller_file;
@@ -33,6 +33,6 @@ typedef struct {
 
 typedef void (*log_callback)(log *l);
 
-void log_log(int level, char *file, int line, char *fmt, ...);
+void log_log(log_level level, char *file, int line, char *fmt, ...);
 
 #endif
