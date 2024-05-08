@@ -7,6 +7,8 @@
 #include "stdatomic.h"
 #endif
 
+#ifdef USE_LOG_COLOR
+
 #define DEFAULT_COLOR "\e[0;0m"
 #define BLK "\e[0;30m"
 #define RED "\e[0;31m"
@@ -17,12 +19,14 @@
 #define CYN "\e[0;36m"
 #define WHT "\e[0;37m"
 
-const char *level_strings[] = {
-	"TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
-};
-
 const char *level_colors[] = {
 	CYN, BLU, GRN, YEL, RED, PUR
+};
+
+#endif
+
+const char *level_strings[] = {
+	"TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
 };
 
 const char* log_level_string(log_level lvl) {
