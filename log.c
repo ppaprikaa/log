@@ -130,7 +130,7 @@ void log_std_callback(log* l) {
 #else
 	fprintf(
 			l->writer, 
-			"%s %-5s <%s:%d>",
+			"%s %-5s <%s:%d> ",
 			time,
 			level_strings[l->lvl],
 			l->caller_file, l->caller_line
@@ -147,7 +147,7 @@ void log_std_file_callback(log* l) {
 	datetime[datetime_len] = '\0';
 	fprintf(
 			l->writer, 
-			"%s %-5s <%s:%d>",
+			"%s %-5s <%s:%d> ",
 			datetime,
 			level_strings[l->lvl],
 			l->caller_file, l->caller_line
