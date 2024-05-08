@@ -37,7 +37,7 @@ void log_log(log_level level, char *file, int line, char *fmt, ...);
 int log_add_callback(log_callback func, FILE *writer, log_level lvl);
 // if 0 then logs won't go to stdout by default
 // quiet == 1 by default
-int log_set_quiet(int quiet);
+void log_set_quiet(int quiet);
 const char* log_level_string(log_level lvl);
 
 #endif

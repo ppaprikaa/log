@@ -50,6 +50,7 @@ static struct {
 	atomic_int lock;
 #endif
 
+	int quiet;
 	callback cbs[MAX_CALLBACKS];
 } logger;
 
@@ -62,6 +63,10 @@ int log_add_callback(log_callback func, FILE *writer, log_level lvl) {
 	}
 
 	return -1;
+}
+
+void log_set_quiet(int quiet) {
+	logger.quiet = quiet;
 }
 
 // in the absence of atomics, I want to provide at least some guarantees -.-
