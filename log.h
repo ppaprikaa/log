@@ -35,6 +35,7 @@ typedef void (*log_callback)(log *l);
 
 void log_log(log_level level, char *file, int line, char *fmt, ...);
 int log_add_callback(log_callback func, FILE *writer, log_level lvl);
+int log_add_file(FILE* f, log_level lvl);
 // if 1 then logs won't go to stdout and stderr by default
 // quiet == 0 by default
 void log_set_quiet(int quiet);

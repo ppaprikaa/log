@@ -40,6 +40,7 @@ const char* log_level_string(log_level lvl) {
 static void lock();
 static void unlock();
 void log_std_callback(log* l);
+void log_std_file_callback(log* l);
 
 typedef struct {
 	log_callback func;
@@ -108,6 +109,10 @@ int log_add_callback(log_callback func, FILE *writer, log_level lvl) {
 	}
 
 	return -1;
+}
+
+int log_add_file(FILE *f, log_level lvl) {
+	return log_add_callback(log_std_file_callback, f, lvl);
 }
 
 void log_std_callback(log* l) {
