@@ -51,6 +51,7 @@ static struct {
 #endif
 
 	int quiet;
+	log_level lvl;
 	callback cbs[MAX_CALLBACKS];
 } logger;
 
@@ -93,6 +94,10 @@ void log_std_callback(log* l) {
 
 void log_set_quiet(int quiet) {
 	logger.quiet = quiet;
+}
+
+void log_set_level(log_level lvl) {
+	logger.lvl = lvl;
 }
 
 // in the absence of atomics, I want to provide at least some guarantees -.-
