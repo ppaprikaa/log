@@ -1,5 +1,7 @@
 #include "log.h"
+
 #include <stdio.h>
+#include <time.h>
 
 #define MAX_CALLBACKS 32
 
@@ -54,6 +56,14 @@ static struct {
 	log_level lvl;
 	callback cbs[MAX_CALLBACKS];
 } logger;
+
+void init_log(log* l, FILE* writer) {
+	if (l->time == NULL) {
+		time_t t = time(NULL);
+		l->time = localtime(&t);
+	}
+	l->writer = writer;
+}
 
 int log_add_callback(log_callback func, FILE *writer, log_level lvl) {
 	for (size_t i = 0; i < MAX_CALLBACKS; i++) {
