@@ -136,6 +136,22 @@ void log_std_callback(log* l) {
 	fflush(l->writer);
 }
 
+void log_std_file_callback(log* l) {
+	char datetime[64];
+	size_t datetime_len = strftime(datetime, sizeof(datetime), "%Y:%m:%d %H:%M:%S", l->time);
+	datetime[datetime_len] = '\0';
+	fprintf(
+			l->writer, 
+			"%s %-5s <%s:%d>",
+			datetime,
+			level_strings[l->lvl],
+			l->caller_file, l->caller_line
+			);
+	vfprintf(l->writer, l->fmt, l->args);
+	fprintf(l->writer, "\n");
+	fflush(l->writer);
+}
+
 void log_set_quiet(int quiet) {
 	logger.quiet = quiet;
 }
