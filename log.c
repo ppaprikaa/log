@@ -65,6 +65,32 @@ int log_add_callback(log_callback func, FILE *writer, log_level lvl) {
 	return -1;
 }
 
+void log_std_callback(log* l) {
+	char time[16];
+	size_t time_len = strftime(time, sizeof(time), "%H:%M:%S", l->time);
+	time[time_len] = '\0';
+#ifdef USE_LOG_COLOR
+	fprintf(
+			l->writer, 
+			"%s %s%-5s%s <%s:%d>",
+			time,
+			level_colors[l->lvl], level_strings[l->lvl], DEFAULT_COLOR,
+			l->caller_file, l->caller_line
+			);
+#else
+	fprintf(
+			l->writer, 
+			"%s %-5s <%s:%d>",
+			time,
+			level_strings[l->lvl],
+			l->caller_file, l->caller_line
+			);
+#endif
+	vfprintf(l->writer, l->fmt, l->args);
+	fprintf(l->writer, "\n");
+	fflush(l->writer);
+}
+
 void log_set_quiet(int quiet) {
 	logger.quiet = quiet;
 }
