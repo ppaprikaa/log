@@ -63,7 +63,7 @@ static struct {
 } logger;
 
 void init_log(log* l, FILE* writer) {
-	if (l->time == NULL) {
+	if (!l->time) {
 		time_t t = time(NULL);
 		l->time = localtime(&t);
 	}
@@ -88,7 +88,7 @@ void log_log(log_level level, char *file, int line, char *fmt, ...) {
 		va_end(l.args);
 	}
 
-	for (size_t i = 0; i < MAX_CALLBACKS && logger.cbs[i].func != NULL; i++) {
+	for (size_t i = 0; i < MAX_CALLBACKS && logger.cbs[i].func; i++) {
 		callback* cb = &logger.cbs[i];
 		if (level >= cb->lvl) {
 			l.writer = cb->writer;
@@ -103,7 +103,7 @@ void log_log(log_level level, char *file, int line, char *fmt, ...) {
 
 int log_add_callback(log_callback func, FILE *writer, log_level lvl) {
 	for (size_t i = 0; i < MAX_CALLBACKS; i++) {
-		if (logger.cbs[i].func == NULL) {
+		if (!logger.cbs[i].func) {
 			logger.cbs[i] = (callback){.func = func, .writer = writer, .lvl = lvl};
 			return 0;
 		}
@@ -122,8 +122,7 @@ int log_add_json_file(FILE *f, log_level lvl) {
 
 void log_std_callback(log* l) {
 	char time[16];
-	size_t time_len = strftime(time, sizeof(time), "%H:%M:%S", l->time);
-	time[time_len] = '\0';
+	time[strftime(time, sizeof(time), "%H:%M:%S", l->time)] = '\0';
 #ifdef USE_LOG_COLOR
 	fprintf(
 			l->writer, 
@@ -148,8 +147,7 @@ void log_std_callback(log* l) {
 
 void log_std_file_callback(log* l) {
 	char datetime[64];
-	size_t datetime_len = strftime(datetime, sizeof(datetime), "%Y:%m:%d %H:%M:%S", l->time);
-	datetime[datetime_len] = '\0';
+	datetime[strftime(datetime, sizeof(datetime), "%Y:%m:%d %H:%M:%S", l->time)] = '\0';
 	fprintf(
 			l->writer, 
 			"%s %-5s <%s:%d> ",
@@ -164,8 +162,7 @@ void log_std_file_callback(log* l) {
 
 void log_std_json_callback(log* l) {
 	char datetime[64];
-	size_t datetime_len = strftime(datetime, sizeof(datetime), "%Y:%m:%d %H:%M:%S", l->time);
-	datetime[datetime_len] = '\0';
+	datetime[strftime(datetime, sizeof(datetime), "%Y:%m:%d %H:%M:%S", l->time)] = '\0';
 	int message_len = vsnprintf(NULL, 0, l->fmt, l->args);
 	char *message = malloc(message_len + 1);
 	vsnprintf(message, message_len + 1, l->fmt, l->args);
