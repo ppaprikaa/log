@@ -39,6 +39,7 @@ int log_add_callback(log_callback func, FILE *writer, log_level lvl);
 // NOTE: If you want, to log it by using other callback, 
 // then you must use log_add_callback()
 int log_add_file(FILE* f, log_level lvl);
+int log_add_json_file(FILE* f, log_level lvl);
 // if 1 then logs won't go to stdout and stderr by default
 // quiet == 0 by default
 void log_set_quiet(int quiet);

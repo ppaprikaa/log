@@ -117,6 +117,10 @@ int log_add_file(FILE *f, log_level lvl) {
 	return log_add_callback(log_std_file_callback, f, lvl);
 }
 
+int log_add_json_file(FILE *f, log_level lvl) {
+	return log_add_callback(log_std_json_callback, f, lvl);
+}
+
 void log_std_callback(log* l) {
 	char time[16];
 	size_t time_len = strftime(time, sizeof(time), "%H:%M:%S", l->time);
