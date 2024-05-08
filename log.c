@@ -11,7 +11,6 @@
 #include "stdatomic.h"
 #endif
 
-#define USE_LOG_COLOR
 #ifdef USE_LOG_COLOR
 
 #define DEFAULT_COLOR "\e[0;0m"
