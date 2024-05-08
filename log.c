@@ -1,4 +1,5 @@
 #include "log.h"
+#include <stdio.h>
 
 #define MAX_CALLBACKS 32
 
@@ -13,6 +14,9 @@ const char *level_strings[] = {
 const char* log_level_string(log_level lvl) {
 	return level_strings[lvl];
 }
+
+static void lock();
+static void unlock();
 
 typedef struct {
 	log_callback func;
@@ -43,7 +47,7 @@ int log_add_callback(log_callback func, FILE *writer, log_level lvl) {
 }
 
 // in the absence of atomics, I want to provide at least some guarantees -.-
-static void lock() {
+void lock() {
 #ifdef __STDC_NO_ATOMICS__
 	while (logger.lock);
 	logger.lock = 1;
@@ -52,7 +56,7 @@ static void lock() {
 #endif
 }
 
-static void unlock() {
+void unlock() {
 #ifdef __STDC_NO_ATOMICS__
 	logger.lock = 0;
 #else
