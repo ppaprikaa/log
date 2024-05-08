@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdarg.h>
+#include <stdlib.h>
 
 #define MAX_CALLBACKS 32
 
@@ -41,6 +42,7 @@ static void lock();
 static void unlock();
 void log_std_callback(log* l);
 void log_std_file_callback(log* l);
+void log_std_json_callback(log* l);
 
 typedef struct {
 	log_callback func;
@@ -155,6 +157,26 @@ void log_std_file_callback(log* l) {
 	vfprintf(l->writer, l->fmt, l->args);
 	fprintf(l->writer, "\n");
 	fflush(l->writer);
+}
+
+void log_std_json_callback(log* l) {
+	char datetime[64];
+	size_t datetime_len = strftime(datetime, sizeof(datetime), "%Y:%m:%d %H:%M:%S", l->time);
+	datetime[datetime_len] = '\0';
+	int message_len = vsnprintf(NULL, 0, l->fmt, l->args);
+	char *message = malloc(message_len + 1);
+	vsnprintf(message, message_len + 1, l->fmt, l->args);
+	fprintf(
+			l->writer, 
+			"{ \"datetime\": \"%s\", \"level\": \"%s\", \"caller\": \"%s:%d\", \"message\": \"%s\" }\n",
+			datetime,
+			level_strings[l->lvl],
+			l->caller_file, l->caller_line,
+			message
+			);
+	fflush(l->writer);
+
+	free(message);
 }
 
 void log_set_quiet(int quiet) {
