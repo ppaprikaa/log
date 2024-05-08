@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <time.h>
+#include <stdarg.h>
 
 #define MAX_CALLBACKS 32
 
@@ -9,6 +10,7 @@
 #include "stdatomic.h"
 #endif
 
+#define USE_LOG_COLOR
 #ifdef USE_LOG_COLOR
 
 #define DEFAULT_COLOR "\e[0;0m"
@@ -37,6 +39,7 @@ const char* log_level_string(log_level lvl) {
 
 static void lock();
 static void unlock();
+void log_std_callback(log* l);
 
 typedef struct {
 	log_callback func;
@@ -65,6 +68,37 @@ void init_log(log* l, FILE* writer) {
 	l->writer = writer;
 }
 
+void log_log(log_level level, char *file, int line, char *fmt, ...) {
+	log l = {
+		.lvl = level,
+		.caller_file = file,
+		.caller_line = line,
+		.fmt = fmt,
+	};
+
+	lock();
+
+	if (level < ERROR) init_log(&l, stdout);
+	else init_log(&l, stderr);
+	if (!logger.quiet && level >= logger.lvl) {
+		va_start(l.args, fmt);
+		log_std_callback(&l);
+		va_end(l.args);
+	}
+
+	for (size_t i = 0; i < MAX_CALLBACKS && logger.cbs[i].func != NULL; i++) {
+		callback* cb = &logger.cbs[i];
+		if (level >= cb->lvl) {
+			l.writer = cb->writer;
+			va_start(l.args, fmt);
+			cb->func(&l);
+			va_end(l.args);
+		}
+	}
+
+	unlock();
+}
+
 int log_add_callback(log_callback func, FILE *writer, log_level lvl) {
 	for (size_t i = 0; i < MAX_CALLBACKS; i++) {
 		if (logger.cbs[i].func == NULL) {
@@ -83,7 +117,7 @@ void log_std_callback(log* l) {
 #ifdef USE_LOG_COLOR
 	fprintf(
 			l->writer, 
-			"%s %s%-5s%s <%s:%d>",
+			"%s %s%-5s%s <%s:%d> ",
 			time,
 			level_colors[l->lvl], level_strings[l->lvl], DEFAULT_COLOR,
 			l->caller_file, l->caller_line
