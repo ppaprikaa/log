@@ -32,9 +32,11 @@ typedef struct {
 } log;
 
 typedef void (*log_callback)(log *l);
+typedef void (*fatal_log_callback)();
 
 void log_log(log_level level, char *file, int line, char *fmt, ...);
 int log_add_callback(log_callback func, FILE *writer, log_level lvl);
+void log_set_fatal_log_callback(fatal_log_callback func);
 // uses standard file logging callback under the hood
 // NOTE: If you want, to log it by using other callback, 
 // then you must use log_add_callback()

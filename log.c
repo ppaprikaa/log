@@ -5,7 +5,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
-#define MAX_CALLBACKS 32
+#define MAX_LOG_CALLBACKS 32
 
 #ifndef __STDC_NO_ATOMICS__
 #include "stdatomic.h"
@@ -59,7 +59,8 @@ static struct {
 
 	int quiet;
 	log_level lvl;
-	callback cbs[MAX_CALLBACKS];
+	callback cbs[MAX_LOG_CALLBACKS];
+	fatal_log_callback fatal_cb;
 } logger;
 
 void init_log(log* l, FILE* writer) {
@@ -88,7 +89,7 @@ void log_log(log_level level, char *file, int line, char *fmt, ...) {
 		va_end(l.args);
 	}
 
-	for (size_t i = 0; i < MAX_CALLBACKS && logger.cbs[i].func; i++) {
+	for (size_t i = 0; i < MAX_LOG_CALLBACKS && logger.cbs[i].func; i++) {
 		callback* cb = &logger.cbs[i];
 		if (level >= cb->lvl) {
 			l.writer = cb->writer;
@@ -98,11 +99,15 @@ void log_log(log_level level, char *file, int line, char *fmt, ...) {
 		}
 	}
 
+	if (level >= FATAL && logger.fatal_cb) {
+		logger.fatal_cb();
+	}
+
 	unlock();
 }
 
 int log_add_callback(log_callback func, FILE *writer, log_level lvl) {
-	for (size_t i = 0; i < MAX_CALLBACKS; i++) {
+	for (size_t i = 0; i < MAX_LOG_CALLBACKS; i++) {
 		if (!logger.cbs[i].func) {
 			logger.cbs[i] = (callback){.func = func, .writer = writer, .lvl = lvl};
 			return 0;
@@ -110,6 +115,10 @@ int log_add_callback(log_callback func, FILE *writer, log_level lvl) {
 	}
 
 	return -1;
+}
+
+void log_add_fatal_log_callback(fatal_log_callback func) {
+	logger.fatal_cb = func;	
 }
 
 int log_add_file(FILE *f, log_level lvl) {
