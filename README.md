@@ -14,7 +14,7 @@ int main(int argc, char* argv[argc + 1]) {
 	log_add_file(logfile, INFO);
 	log_add_json_file(json_logfile, INFO);
 
-	LOG_TRACE("something bad happened");
+	LOG_TRACE("something bad happened on line %d", 11);
 	LOG_DEBUG("something bad happened");
 	LOG_INFO("something bad happened");
 	LOG_ERROR("something bad happened");
@@ -31,7 +31,7 @@ For example: clang -DUSE_LOG_COLOR -o <output> -Wall -Werror <source_files> log.
 
 stdout (NO COLORS):
 ```bash
-15:46:36 TRACE <main.c:11> something bad happened
+15:46:36 TRACE <main.c:11> something bad happened on line 11
 15:46:36 DEBUG <main.c:12> something bad happened
 15:46:36 INFO  <main.c:13> something bad happened
 15:46:36 ERROR <main.c:14> something bad happened
